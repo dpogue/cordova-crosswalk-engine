@@ -1,5 +1,5 @@
-ARM_DOWNLOAD="https://download.01.org/crosswalk/releases/crosswalk/android/canary/8.37.189.0/arm/crosswalk-webview-8.37.189.0-arm.zip";
-X86_DOWNLOAD="https://download.01.org/crosswalk/releases/crosswalk/android/canary/8.37.189.0/x86/crosswalk-webview-8.37.189.0-x86.zip";
+ARM_DOWNLOAD="https://download.01.org/crosswalk/releases/crosswalk/android/beta/10.39.235.9/arm/crosswalk-webview-10.39.235.9-arm.zip";
+X86_DOWNLOAD="https://download.01.org/crosswalk/releases/crosswalk/android/beta/10.39.235.9/x86/crosswalk-webview-10.39.235.9-x86.zip";
 
 download() {
     TMPDIR=cordova-crosswalk-engine-$$
@@ -16,4 +16,4 @@ download() {
 }
 
 download $ARM_DOWNLOAD
-download $X86_DOWNLOAD
+#download $X86_DOWNLOAD
