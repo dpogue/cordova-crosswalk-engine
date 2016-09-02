@@ -28,14 +28,20 @@ import android.webkit.ValueCallback;
 import org.apache.cordova.CordovaDialogsHelper;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.LOG;
+import org.json.JSONException;
+import org.xwalk.core.XWalkFileChooser;
 import org.xwalk.core.XWalkJavascriptResult;
 import org.xwalk.core.XWalkUIClient;
 import org.xwalk.core.XWalkView;
+
+import org.crosswalk.engine.XWalkWebViewEngine.PermissionRequestListener;
 
 public class XWalkCordovaUiClient extends XWalkUIClient {
     private static final String TAG = "XWalkCordovaUiClient";
     protected final CordovaDialogsHelper dialogsHelper;
     protected final XWalkWebViewEngine parentEngine;
+
+    private XWalkFileChooser mFileChooser;
 
     private static final int FILECHOOSER_RESULTCODE = 5173;
 
@@ -171,13 +177,28 @@ public class XWalkCordovaUiClient extends XWalkUIClient {
 
     // File Chooser
     @Override
-    public void openFileChooser(XWalkView view, final ValueCallback<Uri> uploadFile, String acceptType, String capture) {
-        uploadFile.onReceiveValue(null);
+    public void openFileChooser(XWalkView view, final ValueCallback<Uri> uploadFile,
+            final String acceptType, final String capture) {
+        if (mFileChooser == null) {
+            mFileChooser = new XWalkFileChooser(parentEngine.cordova.getActivity());
+        }
+
+        PermissionRequestListener listener = new PermissionRequestListener() {
+            @Override
+            public void onRequestPermissionResult(int requestCode, String[] permissions,
+                    int[] grantResults) throws JSONException {
+                for (int i = 0; i < permissions.length; ++i) {
+                    Log.d(TAG, "permission:" + permissions[i] + " result:" + grantResults[i]);
+                }
+                mFileChooser.showFileChooser(uploadFile, acceptType, capture);
+            }
+        };
+        parentEngine.requestPermissionsForFileChooser(listener);
 
         parentEngine.cordova.setActivityResultCallback(new CordovaPlugin() {
             @Override
             public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-                parentEngine.webView.onActivityResult(requestCode, resultCode, intent);
+                mFileChooser.onActivityResult(requestCode, resultCode, intent);
             }
         });
     }
