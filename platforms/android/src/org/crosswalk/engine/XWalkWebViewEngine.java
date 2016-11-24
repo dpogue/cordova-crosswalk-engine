@@ -163,6 +163,12 @@ public class XWalkWebViewEngine implements CordovaWebViewEngine {
             @Override
             public void onResume(boolean multitasking) {
                 activityDelegate.onResume();
+                setPaused(false);
+            }
+
+            @Override
+            public void onPause(boolean multitasking) {
+                setPaused(true);
             }
         };
         pluginManager.addService(new PluginEntry("XWalkActivityDelegate", activityDelegatePlugin));
